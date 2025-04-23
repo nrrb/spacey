@@ -80,7 +80,8 @@ const Starfield = () => {
         className="absolute top-0 left-0"
       />
       <div className="text-overlay absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center z-10" style={{textShadow: '0 0 4px rgba(0,0,0,0.7)'}}>
-        <h1 className="text-2xl">Nicholas Bennett - Frontend Developer</h1>
+        <h1 className="text-2xl">Nicholas Bennett</h1>
+        <h1 className="text-2xl">Frontend Developer</h1>
         <p className="code-comment mt-2 text-sm text-[#66ff66]">// Decoding Dev Mysteries for Actual Humans</p>
         {/* Only show button when not playing */}
         {!isPlaying && (
