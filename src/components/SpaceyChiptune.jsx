@@ -1,59 +1,100 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Tone from 'tone';
 
+// Helper function to get random value within a range
+const randomRange = (min, max) => min + Math.random() * (max - min);
+
+// Helper function to randomly transpose notes
+const transposeNotes = (notes, semitones) => {
+  const noteMap = {
+    'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5,
+    'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11
+  };
+  const reverseNoteMap = Object.fromEntries(
+    Object.entries(noteMap).map(([k, v]) => [v, k])
+  );
+  
+  return notes.map(note => {
+    const match = note.match(/([A-G]#?)(\d+)/);
+    if (!match) return note;
+    
+    const [_, noteName, octave] = match;
+    let noteValue = noteMap[noteName];
+    let newOctave = parseInt(octave);
+    
+    noteValue += semitones;
+    while (noteValue >= 12) {
+      noteValue -= 12;
+      newOctave++;
+    }
+    while (noteValue < 0) {
+      noteValue += 12;
+      newOctave--;
+    }
+    
+    return reverseNoteMap[noteValue] + newOctave;
+  });
+};
+
 // Utility functions for creating music
 export const createSynths = (echoAmount) => {
+  // Randomize synth parameters
+  const reverbDecay = randomRange(3, 7);
+  const filterFreq = randomRange(1500, 2500);
+  const filterQ = randomRange(3, 7);
+  const lfoFreq = randomRange(0.05, 0.2);
+  
   // Create a reverb effect
   const reverb = new Tone.Reverb({
-    decay: 5,
-    wet: 0.5
+    decay: reverbDecay,
+    wet: randomRange(0.3, 0.6)
   }).toDestination();
   
   // Create a delay effect
   const delay = new Tone.FeedbackDelay({
-    delayTime: 0.3,
+    delayTime: randomRange(0.2, 0.4),
     feedback: echoAmount,
-    wet: 0.3
+    wet: randomRange(0.2, 0.4)
   }).connect(reverb);
 
   // Create a filter for sweeping effects
   const filter = new Tone.Filter({
     type: "lowpass",
-    frequency: 2000,
-    Q: 5
+    frequency: filterFreq,
+    Q: filterQ
   }).connect(delay);
 
   // Create main synth for arpeggios
   const synth = new Tone.PolySynth(Tone.Synth, {
     oscillator: {
-      type: "square"
+      type: ["square", "triangle", "sine"][Math.floor(Math.random() * 3)]
     },
     envelope: {
-      attack: 0.01,
-      decay: 0.1,
-      sustain: 0.3,
-      release: 0.5
+      attack: randomRange(0.01, 0.05),
+      decay: randomRange(0.1, 0.3),
+      sustain: randomRange(0.2, 0.4),
+      release: randomRange(0.4, 0.8)
     }
   }).connect(filter);
 
   // Create bass synth
   const bassSynth = new Tone.Synth({
     oscillator: {
-      type: "triangle"
+      type: ["triangle", "sine"][Math.floor(Math.random() * 2)]
     },
     envelope: {
-      attack: 0.05,
-      decay: 0.2,
-      sustain: 0.8,
-      release: 1
+      attack: randomRange(0.05, 0.1),
+      decay: randomRange(0.2, 0.4),
+      sustain: randomRange(0.6, 0.9),
+      release: randomRange(0.8, 1.2)
     }
   }).connect(filter);
 
   // Set up a sweep LFO for the filter
   const filterLFO = new Tone.LFO({
-    frequency: 0.1,
-    min: 500,
-    max: 3000
+    frequency: lfoFreq,
+    min: randomRange(400, 600),
+    max: randomRange(2500, 3500)
   }).connect(filter.frequency);
   filterLFO.start();
 
@@ -66,13 +107,17 @@ export const createSynths = (echoAmount) => {
 
 // Create arpeggio pattern
 export const createArpeggioPattern = (arpeggioSpeed, synthRef, isPlaying) => {
-  // Spacey chord progression
-  const chords = [
+  // Base chord progression
+  const baseChords = [
     ["C4", "E4", "G4", "B4"],
     ["A3", "C4", "E4", "G4"],
     ["F3", "A3", "C4", "E4"],
     ["G3", "B3", "D4", "F4"]
   ];
+  
+  // Randomly transpose the entire progression
+  const transposition = Math.floor(randomRange(-3, 4)); // -3 to +3 semitones
+  const chords = baseChords.map(chord => transposeNotes(chord, transposition));
   
   let notes = [];
   const notesPerChord = arpeggioSpeed;
@@ -82,9 +127,12 @@ export const createArpeggioPattern = (arpeggioSpeed, synthRef, isPlaying) => {
     
     for (let j = 0; j < notesPerChord; j++) {
       // Vary the pattern to create interest
-      const noteIndex = j % 4;
-      const octaveShift = Math.floor(j / 4) % 2 === 0 ? 0 : 1;
+      const noteIndex = Math.random() < 0.8 ? j % 4 : Math.floor(Math.random() * 4);
+      const octaveShift = Math.random() < 0.7 ? Math.floor(j / 4) % 2 : Math.floor(Math.random() * 2);
       const note = chord[noteIndex];
+      
+      // Randomly skip some notes for rhythmic variation
+      if (Math.random() < 0.1) continue;
       
       // Shift some notes up an octave
       const actualNote = octaveShift && note.includes("3") 
@@ -96,7 +144,7 @@ export const createArpeggioPattern = (arpeggioSpeed, synthRef, isPlaying) => {
       notes.push({
         time: startTime + j * Tone.Time("8n").toSeconds(),
         note: actualNote,
-        velocity: 0.7 + Math.random() * 0.3 // Random velocity for more organic feel
+        velocity: 0.6 + Math.random() * 0.4
       });
     }
   });
@@ -105,7 +153,7 @@ export const createArpeggioPattern = (arpeggioSpeed, synthRef, isPlaying) => {
   const part = new Tone.Part((time, value) => {
     synthRef.current.triggerAttackRelease(
       value.note, 
-      "16n", 
+      randomRange(0.1, 0.2), // Randomize note duration
       time, 
       value.velocity
     );
@@ -125,8 +173,12 @@ export const createArpeggioPattern = (arpeggioSpeed, synthRef, isPlaying) => {
 
 // Create bass pattern
 export const createBassPattern = (bassSpeed, bassSynthRef, isPlaying) => {
-  // Bass notes corresponding to the chord progression
-  const bassNotes = ["C2", "A1", "F1", "G1"];
+  // Base bass notes
+  const baseBassNotes = ["C2", "A1", "F1", "G1"];
+  
+  // Transpose to match the arpeggio pattern
+  const transposition = Math.floor(randomRange(-3, 4));
+  const bassNotes = transposeNotes(baseBassNotes, transposition);
   
   let bassPattern = [];
   const notesPerBass = bassSpeed;
@@ -135,13 +187,13 @@ export const createBassPattern = (bassSpeed, bassSynthRef, isPlaying) => {
     const startTime = i * notesPerBass * Tone.Time("2n").toSeconds();
     
     for (let j = 0; j < notesPerBass; j++) {
-      // Skip some notes to create a rhythmic pattern
-      if (j === 1 && Math.random() > 0.5) continue;
+      // More varied rhythmic patterns
+      if (Math.random() < 0.3) continue;
       
       bassPattern.push({
         time: startTime + j * Tone.Time("2n").toSeconds(),
         note: note,
-        velocity: 0.8
+        velocity: 0.7 + Math.random() * 0.3
       });
     }
   });
@@ -150,7 +202,7 @@ export const createBassPattern = (bassSpeed, bassSynthRef, isPlaying) => {
   const bassPart = new Tone.Part((time, value) => {
     bassSynthRef.current.triggerAttackRelease(
       value.note, 
-      "2n", 
+      Tone.Time("2n").toSeconds() * randomRange(0.8, 1.2), // Slightly randomize duration
       time, 
       value.velocity
     );
@@ -170,9 +222,12 @@ export const createBassPattern = (bassSpeed, bassSynthRef, isPlaying) => {
 
 // Create and initialize all music components
 export const initializeMusic = () => {
-  const echoAmount = 0.4;
-  const arpeggioSpeed = 8;
-  const bassSpeed = 2;
+  const echoAmount = randomRange(0.3, 0.5);
+  const arpeggioSpeed = Math.floor(randomRange(6, 10));
+  const bassSpeed = Math.floor(randomRange(1, 3));
+  
+  // Set a random tempo
+  Tone.Transport.bpm.value = Math.floor(randomRange(100, 140));
   
   // Create synths and effects
   const { synth, bassSynth, effects } = createSynths(echoAmount);
