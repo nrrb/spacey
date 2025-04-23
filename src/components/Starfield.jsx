@@ -89,7 +89,7 @@ const Starfield = () => {
             onClick={togglePlay}
             className="mt-4 px-6 py-2 rounded-lg text-lg font-bold text-white transition bg-green-600 hover:bg-green-700"
           >
-            Play Music
+            A cosmic ray told me to play this song
           </button>
         )}
       </div>
