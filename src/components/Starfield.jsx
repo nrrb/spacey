@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import * as Tone from 'tone';
 import { initializeMusic } from './SpaceyChiptune';
 
 const Starfield = () => {
