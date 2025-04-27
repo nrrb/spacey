@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full h-screen bg-[#0c0c1d] font-mono overflow-hidden">
+  <div class="relative w-screen h-screen bg-[#0c0c1d] font-mono overflow-hidden m-0 p-0">
     <canvas 
       ref="canvasRef"
       class="absolute top-0 left-0"
