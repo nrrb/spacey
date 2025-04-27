@@ -46,11 +46,11 @@ The starfield animation is done with this code:
 
 ## Spacey Chiptune Generator
 
-First off, I'm not claiming this is the definitive guide to procedural audio - it's just what I know after tinkering with this stuff. And I get it, when you're starting out, getting bombarded with a million different options is overwhelming. Been there.
+First off, I'm not claiming this is the definitive guide to procedural audio. It's just what I know after tinkering with this stuff. And I get it, when you're starting out, getting bombarded with a million different options is overwhelming. Been there.
 
 ### How I Got Started with This
 
-Back in the day, I was messing around with some visual animations and thought, "Man, this starfield would be so much cooler with the right soundtrack." I didn't want to just slap on some random MP3 - I wanted something that would feel unique each time.
+Back in the day, I was messing around with some visual animations and thought, "Man, this starfield would be so much cooler with the right soundtrack." I didn't want to just slap on some random MP3, I wanted something that would feel unique each time.
 
 ### The Building Blocks
 
@@ -58,7 +58,7 @@ This is how I make my spacey tunes, from easiest to hardest.
 
 ### Tone.js: Your New Best Friend
 
-If you're trying to make audio in the browser, Tone.js is built to be simple. And I prefer simple!
+If you're trying to make audio in the browser, [Tone.js](https://tonejs.github.io/) is built to be simple. And I prefer simple!
 
 ```javascript
 import * as Tone from 'tone'
@@ -82,7 +82,7 @@ Even with just this, you'd be surprised what you can make. But it's when you sta
 
 ### Effects Chain: Space-ifying Your Sound
 
-To get that floaty, ethereal vibe, I stack up a few effects:
+To get that floaty, ethereal vibe, I stack up a few effects ([reverb](https://tonejs.github.io/docs/r13/Reverb), [delay](https://tonejs.github.io/docs/r13/FeedbackDelay), [filter](https://tonejs.github.io/docs/r13/Filter), [synth](https://tonejs.github.io/docs/r13/Synth)):
 
 ```javascript
 // Reverb makes everything sound like it's in a massive cave
@@ -111,7 +111,7 @@ const synth = new Tone.Synth({
 }).connect(filter)
 ```
 
-The real magic happens when you add an LFO (Low Frequency Oscillator) to slowly sweep the filter:
+The real magic happens when you add an [LFO (Low Frequency Oscillator)](https://tonejs.github.io/docs/r13/LFO) to slowly sweep the filter:
 
 ```javascript
 // This makes the sound wah-wah very slowly
@@ -152,7 +152,7 @@ This is how you get a slightly different sound each time you fire it up. It keep
 
 ### The Musical Structure
 
-I start with a basic chord progression:
+I start with a basic [chord progression](https://en.wikipedia.org/wiki/Chord_progression):
 
 ```javascript
 // This progression just feels spacey
