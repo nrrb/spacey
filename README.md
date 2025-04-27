@@ -50,7 +50,7 @@ First off, I'm not claiming this is the definitive guide to procedural audio. It
 
 ### How I Got Started with This
 
-Back in the day, I was messing around with some visual animations and thought, "Man, this starfield would be so much cooler with the right soundtrack." I didn't want to just slap on some random MP3, I wanted something that would feel unique each time.
+I was messing around with some visual animations and thought, "Man, this starfield would be so much cooler with the right soundtrack." I didn't want to just slap on some random MP3, I wanted something that would feel unique each time.
 
 ### The Building Blocks
 
@@ -140,6 +140,7 @@ const synth = new Tone.PolySynth(Tone.Synth, {
     type: ["square", "triangle", "sine"][Math.floor(Math.random() * 3)]
   },
   envelope: {
+    // Simian Mobile Disco
     attack: randomRange(0.01, 0.05),
     decay: randomRange(0.1, 0.3),
     sustain: randomRange(0.2, 0.4),
