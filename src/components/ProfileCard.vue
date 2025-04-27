@@ -29,6 +29,9 @@
           </li>
         </ul>
         <slot></slot>
+        <div class="mt-6 text-sm opacity-60 hover:opacity-100 transition-opacity">
+          <a href="https://github.com/nrrb/spacey" class="text-green-400 hover:underline">want to see how I built this?</a>
+        </div>
       </div>
     </div>
   </div>
