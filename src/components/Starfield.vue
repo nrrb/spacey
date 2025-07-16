@@ -32,6 +32,11 @@ const togglePlay = async () => {
   }
 }
 
+const maxSpeed = 4
+const minSpeed = 1
+const maxSize = 2
+const minSize = 0.5
+
 onMounted(() => {
   const canvas = canvasRef.value
   canvas.width = window.innerWidth
@@ -39,10 +44,10 @@ onMounted(() => {
   const ctx = canvas.getContext('2d')
   
   // Create stars
-  const stars = Array.from({ length: 100 }, () => ({
+  const stars = Array.from({ length: 200 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    speed: Math.random() * 3 + 1
+    speed: Math.random() * (maxSpeed - minSpeed) + minSpeed,
   }))
   
   // Animation function
@@ -53,7 +58,8 @@ onMounted(() => {
     stars.forEach(star => {
       star.x = (star.x + star.speed) % canvas.width
       ctx.fillStyle = 'white'
-      ctx.fillRect(star.x, star.y, 2, 2)
+      let size = (star.speed - minSpeed) * (maxSize - minSize) / (maxSpeed - minSpeed) + minSize
+      ctx.fillRect(star.x, star.y, size, size)
     })
     
     requestAnimationFrame(animate)
